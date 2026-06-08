@@ -49,10 +49,10 @@
                 </ul>
                 <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
                     <div>
-                        <span class="text-2xl font-bold text-slate-900">10</span>
+                        <span class="text-2xl font-bold text-slate-900">60</span>
                         <span class="text-slate-500 text-sm font-medium ml-1">BHD</span>
                     </div>
-                    <a href="#" class="bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md">
+                    <a href="/checkout?product=coaching" class="bg-brand-700 hover:bg-brand-800 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md">
                         Book Now
                     </a>
                 </div>
