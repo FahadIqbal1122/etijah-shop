@@ -13,14 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-
-      - name: Install Composer dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -29,26 +21,16 @@ jobs:
       - name: Install and build assets
         run: npm ci && npm run build
 
-      - name: Deploy via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          source: "./"
-          target: "/home/lzdpw45vpwxp/public_html/"
-          overwrite: true
-          rm: false
-          exclude: ".git,.env,storage/logs,node_modules"
-
-      - name: Post-deploy commands
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd /home/lzdpw45vpwxp/public_html
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+            cd ~/shop.etijahcoaching.com
+            git pull origin main
+            php artisan migrate --force
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
