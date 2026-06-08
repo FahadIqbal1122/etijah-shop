@@ -29,15 +29,17 @@ jobs:
       - name: Install and build assets
         run: npm ci && npm run build
 
-      - name: Deploy via SSH (rsync)
-        uses: burnett01/rsync-deployments@7.0.1
+      - name: Deploy via SCP
+        uses: appleboy/scp-action@v0.1.7
         with:
-          switches: -avzr --delete --exclude='.env' --exclude='storage/' --exclude='.git/'
-          path: ./
-          remote_path: /home/lzdpw45vpwxp/public_html/
-          remote_host: ${{ secrets.SSH_HOST }}
-          remote_user: ${{ secrets.SSH_USERNAME }}
-          remote_password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "./"
+          target: "/home/lzdpw45vpwxp/public_html/"
+          overwrite: true
+          rm: false
+          exclude: ".git,.env,storage/logs,node_modules"
 
       - name: Post-deploy commands
         uses: appleboy/ssh-action@v1.2.0
