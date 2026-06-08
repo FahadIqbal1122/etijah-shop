@@ -13,7 +13,7 @@ class CheckoutController extends Controller
             'coaching' => [
                 'name' => 'Coaching Session',
                 'description' => '1-on-1 coaching session',
-                'price' => '10.000',
+                'price' => '60.000',
                 'currency' => 'BHD',
             ],
             'ufuq' => [
