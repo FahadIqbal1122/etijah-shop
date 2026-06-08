@@ -20,5 +20,6 @@ Route::get('/privacy', function () {
 });
 
 Route::get('/checkout', [CheckoutController::class, 'show']);
+Route::post('/checkout', [CheckoutController::class, 'store']);
 Route::get('/checkout/success', [CheckoutController::class, 'success']);
 Route::get('/checkout/failed', [CheckoutController::class, 'failed']);
