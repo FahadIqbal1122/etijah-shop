@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\TapPaymentService;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
@@ -38,14 +39,14 @@ class CheckoutController extends Controller
             'email' => 'required|email|max:200',
             'phone' => 'nullable|string|max:30',
             'product_key' => 'required|string',
-            'payment_method' => 'required|in:cod',
+            'payment_method' => 'required|in:cod,tap',
             'notes' => 'nullable|string|max:1000'
         ]);
 
         $productKey = $request->product_key;
         $product = $this->products[$productKey] ?? $this->products['coaching'];
 
-        Order::create([
+        $order = Order::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -59,7 +60,43 @@ class CheckoutController extends Controller
             'notes' => $request->notes,
         ]);
 
+        if ($request->payment_method === 'tap') {
+            try {
+                $charge = app(TapPaymentService::class)->createCharge(
+                    $order,
+                    redirectUrl: route('checkout.tap.callback'),
+                    webhookUrl: route('webhook.tap'),
+                );
+
+                $order->update(['tap_charge_id' => $charge['id']]);
+
+                return redirect()->away($charge['transaction']['url']);
+            } catch (\Throwable $e) {
+                $order->update(['status' => 'failed']);
+                report($e);
+
+                return redirect('/checkout/failed');
+            }
+        }
+
         return redirect('/checkout/success');
+    }
+
+    public function tapCallback(Request $request, TapPaymentService $tap)
+    {
+        $tapId = $request->query('tap_id');
+        $order = Order::where('tap_charge_id', $tapId)->firstOrFail();
+
+        // Never trust the redirect query params alone — verify the real status via the API.
+        $charge = $tap->retrieveCharge($tapId);
+
+        if ($charge['status'] === 'CAPTURED') {
+            $order->update(['status' => 'paid', 'paid_at' => now()]);
+            return redirect('/checkout/success');
+        }
+
+        $order->update(['status' => 'failed']);
+        return redirect('/checkout/failed');
     }
 
     public function success(Request $request){

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'tap' => [
+        'secret_key' => env('TAP_SECRET_KEY'),
+        'base_url' => env('TAP_BASE_URL', 'https://api.tap.company/v2'),
+    ],
+
 ];

@@ -79,7 +79,15 @@
                                 <div>
                                     <p class="text-sm font-semibold text-slate-800">Cash on Delivery</p>
                                     <p class="text-xs text-slate-500 mt-0.5">Pay in cash when we contact you to confirm your booking.</p>
-                                </div>                                                                                                                                                                   
+                                </div>
+                            </label>
+
+                            <label class="flex items-start gap-4 border border-slate-200 rounded-xl p-4 cursor-pointer mt-3">
+                                <input type="radio" name="payment_method" value="tap" class="mt-0.5 accent-brand-700">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800">Pay by Card</p>
+                                    <p class="text-xs text-slate-500 mt-0.5">Secure payment via Tap — Visa, Mastercard, mada, and more.</p>
+                                </div>
                             </label>
                         </div>
                     </div>
