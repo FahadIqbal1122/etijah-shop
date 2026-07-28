@@ -18,5 +18,9 @@ class Order extends Model
         'payment_method',
         'status',
         'notes',
+        'source',
+        'external_user_id',
+        'external_ref',
+        'return_url',
     ];
 }

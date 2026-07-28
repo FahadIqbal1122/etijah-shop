@@ -3,6 +3,7 @@
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TapWebhookController;
+use App\Http\Controllers\HubOrderController;
 
 Route::get('/', function () {
     return view('home');
@@ -26,3 +27,4 @@ Route::get('/checkout/success', [CheckoutController::class, 'success']);
 Route::get('/checkout/failed', [CheckoutController::class, 'failed']);
 Route::get('/checkout/tap/callback', [CheckoutController::class, 'tapCallback'])->name('checkout.tap.callback');
 Route::post('/webhook/tap', [TapWebhookController::class, 'handle'])->name('webhook.tap');
+Route::post('/api/hub/orders', [HubOrderController::class, 'store']);

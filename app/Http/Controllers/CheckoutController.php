@@ -89,14 +89,17 @@ class CheckoutController extends Controller
 
         // Never trust the redirect query params alone — verify the real status via the API.
         $charge = $tap->retrieveCharge($tapId);
+        $paid = $charge['status'] === 'CAPTURED';
 
-        if ($charge['status'] === 'CAPTURED') {
-            $order->update(['status' => 'paid', 'paid_at' => now()]);
-            return redirect('/checkout/success');
+        $order->update([
+            'status' => $paid ? 'paid' : 'failed',
+            'paid_at' => $paid ? now() : null,
+        ]);
+
+        if ($order->return_url) {
+            return redirect()-> away($order->return_url . '?order_ref=' . $order->external_ref . '&status=' . ($paid ? 'paid' : 'failed'));
         }
-
-        $order->update(['status' => 'failed']);
-        return redirect('/checkout/failed');
+        return redirect($paid ? '/checkout/success' : '/checkout/failed');
     }
 
     public function success(Request $request){
