@@ -19,4 +19,16 @@ class OrderController extends Controller
 
         return view('admin.orders.index', compact('orders', 'status'));
     }
+
+    public function destroy(Order $order)
+    {
+        $order->delete();
+
+        return redirect('/admin/orders')->with('status', 'Order deleted.');
+    }
+
+    public function invoice(Order $order)
+    {
+        return view('admin.orders.invoice', compact('order'));
+    }
 }

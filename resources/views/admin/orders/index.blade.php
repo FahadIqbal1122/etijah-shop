@@ -25,6 +25,7 @@
                 <th class="px-5 py-3">Status</th>
                 <th class="px-5 py-3">Source</th>
                 <th class="px-5 py-3">Date</th>
+                <th class="px-5 py-3"></th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -50,10 +51,23 @@
                     </td>
                     <td class="px-5 py-3.5 text-slate-500 text-xs">{{ $order->source ?? 'shop' }}</td>
                     <td class="px-5 py-3.5 text-slate-500">{{ $order->created_at->format('M j, Y g:ia') }}</td>
+                    <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                        <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="text-brand-700 hover:text-brand-800 text-sm font-medium mr-4">Invoice</a>
+                        <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    data-confirm
+                                    data-confirm-label="Click again to confirm"
+                                    class="text-red-600 hover:text-red-800 text-sm font-medium border border-transparent rounded px-2 py-1 -mx-2 -my-1">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-8 text-center text-slate-400">No orders found.</td>
+                    <td colspan="8" class="px-5 py-8 text-center text-slate-400">No orders found.</td>
                 </tr>
             @endforelse
         </tbody>

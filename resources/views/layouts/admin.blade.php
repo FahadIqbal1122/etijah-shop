@@ -54,5 +54,35 @@
         </div>
     </div>
 
+    <script>
+        // Dependency-free confirm: window.confirm() is unreliable in some
+        // browsers/extensions/webviews (silently blocked or auto-cancelled),
+        // which makes destructive buttons look broken. This arms the button
+        // on first click and only lets the form submit on a second click
+        // within a few seconds.
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-confirm]');
+            if (!btn) return;
+
+            if (btn.dataset.armed === 'true') {
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var original = btn.textContent;
+            btn.dataset.armed = 'true';
+            btn.textContent = btn.dataset.confirmLabel || 'Click to confirm';
+            btn.classList.add('bg-red-600', 'text-white', 'border-red-600');
+
+            setTimeout(function () {
+                btn.dataset.armed = 'false';
+                btn.textContent = original;
+                btn.classList.remove('bg-red-600', 'text-white', 'border-red-600');
+            }, 3000);
+        });
+    </script>
+
 </body>
 </html>

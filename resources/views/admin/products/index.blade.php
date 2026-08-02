@@ -25,28 +25,37 @@
                         </td>
                         <td class="px-5 py-3.5 text-slate-700">{{ number_format($product->price, 3) }} {{ $product->currency }}</td>
                         <td class="px-5 py-3.5">
-                            <form method="POST" action="{{ route('admin.products.update', $product) }}">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="name" value="{{ $product->name }}">
-                                <input type="hidden" name="description" value="{{ $product->description }}">
-                                <input type="hidden" name="price" value="{{ $product->price }}">
-                                <input type="hidden" name="currency" value="{{ $product->currency }}">
-                                <input type="hidden" name="sort_order" value="{{ $product->sort_order }}">
-                                <input type="hidden" name="active" value="{{ $product->active ? '0' : '1' }}">
-                                <button type="submit" @class([
-                                    'inline-flex px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer',
-                                    'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' => $product->active,
-                                    'bg-slate-100 text-slate-500 hover:bg-slate-200' => !$product->active,
-                                ])>{{ $product->active ? 'Active' : 'Inactive' }}</button>
-                            </form>
+                            <div class="flex items-center gap-2.5">
+                                <span @class([
+                                    'inline-flex px-2.5 py-1 rounded-full text-xs font-medium',
+                                    'bg-emerald-50 text-emerald-700' => $product->active,
+                                    'bg-slate-100 text-slate-500' => !$product->active,
+                                ])>{{ $product->active ? 'Active' : 'Unavailable' }}</span>
+                                <form method="POST" action="{{ route('admin.products.update', $product) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="name" value="{{ $product->name }}">
+                                    <input type="hidden" name="description" value="{{ $product->description }}">
+                                    <input type="hidden" name="price" value="{{ $product->price }}">
+                                    <input type="hidden" name="currency" value="{{ $product->currency }}">
+                                    <input type="hidden" name="sort_order" value="{{ $product->sort_order }}">
+                                    <input type="hidden" name="active" value="{{ $product->active ? '0' : '1' }}">
+                                    <button type="submit" class="text-xs font-medium text-slate-500 hover:text-slate-700 underline underline-offset-2">
+                                        {{ $product->active ? 'Make unavailable' : 'Make available' }}
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                         <td class="px-5 py-3.5 text-right">
-                            <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
-                                  onsubmit="return confirm('Remove {{ addslashes($product->name) }}? This cannot be undone.');">
+                            <form method="POST" action="{{ route('admin.products.destroy', $product) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium">Remove</button>
+                                <button type="submit"
+                                        data-confirm
+                                        data-confirm-label="Click again to confirm"
+                                        class="text-red-600 hover:text-red-800 text-sm font-medium border border-transparent rounded px-2 py-1 -mx-2 -my-1">
+                                    Remove
+                                </button>
                             </form>
                         </td>
                     </tr>
