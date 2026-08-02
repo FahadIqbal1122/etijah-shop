@@ -22,5 +22,7 @@ class Order extends Model
         'external_user_id',
         'external_ref',
         'return_url',
+        'tap_charge_id',
+        'paid_at',
     ];
 }
