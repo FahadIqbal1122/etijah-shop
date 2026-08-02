@@ -23,6 +23,14 @@ class TapWebhookController extends Controller
 
         $expected = hash_hmac('sha256', $toBeHashed, $secretKey);
 
+        \Illuminate\Support\Facades\Log::info('TAP_WEBHOOK_DEBUG', [
+            'raw_payload' => $request->getContent(),
+            'headers' => $request->headers->all(),
+            'toBeHashed' => $toBeHashed,
+            'expected' => $expected,
+            'received_hashstring' => $request->header('hashstring'),
+        ]);
+
         if (!hash_equals($expected, $request->header('hashstring', ''))) {
             abort(401, 'Invalid signature');
         }
