@@ -3,31 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Services\TapPaymentService;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
-    private array $products = [
-        'coaching' => [
-            'name' => 'Coaching Session',
-            'description' => '1-on-1 coaching session',
-            'price' => '60.000',
-            'currency' => 'BHD',
-            ],
-            'ufuq' => [
-                'name' => 'Ufuq Career Assessment',
-                'description' => 'Comprehensive career assessment and guidance report',
-                'price' => '25.000', // placeholder
-                'currency' => 'BHD',
-            ],
-        ];
-        
     public function show(Request $request)
     {
         $productKey = $request->query('product', 'coaching');
-        $product = $this->products[$productKey] ?? $this->products['coaching'];
-        
+        $product = Product::where('key', $productKey)->where('active', true)->first()
+            ?? Product::where('active', true)->orderBy('sort_order')->firstOrFail();
+        $productKey = $product->key;
+
         return view('checkout.index', compact('product', 'productKey'));
     }
 
@@ -43,18 +31,17 @@ class CheckoutController extends Controller
             'notes' => 'nullable|string|max:1000'
         ]);
 
-        $productKey = $request->product_key;
-        $product = $this->products[$productKey] ?? $this->products['coaching'];
+        $product = Product::where('key', $request->product_key)->where('active', true)->firstOrFail();
 
         $order = Order::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'product_key' => $productKey,
-            'product_name' => $product['name'],
-            'amount' => $product['price'],
-            'currency' => $product['currency'],
+            'product_key' => $product->key,
+            'product_name' => $product->name,
+            'amount' => $product->price,
+            'currency' => $product->currency,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
             'notes' => $request->notes,
