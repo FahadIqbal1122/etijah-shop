@@ -27,6 +27,10 @@ class Order extends Model
         'paid_at',
     ];
 
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
     /**
      * Apply a Tap charge status. Called from both the redirect callback and the
      * webhook, whichever arrives first; the career platform is notified exactly
@@ -52,20 +56,20 @@ class Order extends Model
 
     private function notifyCareerPlatform(): void
     {
-        $body = json_encode([
-            'external_user_id' => $this->external_user_id,
-            'order_ref' => $this->external_ref,
-            'plan_code' => $this->product_key,
-            'amount' => (float) $this->amount,
-            'currency' => $this->currency,
-            'status' => 'paid',
-            'tap_charge_id' => $this->tap_charge_id,
-            'paid_at' => $this->paid_at?->toIso8601String(),
-        ]);
-
-        $signature = hash_hmac('sha256', $body, config('services.hub.key'));
-
         try {
+            $body = json_encode([
+                'external_user_id' => $this->external_user_id,
+                'order_ref' => $this->external_ref,
+                'plan_code' => $this->product_key,
+                'amount' => (float) $this->amount,
+                'currency' => $this->currency,
+                'status' => 'paid',
+                'tap_charge_id' => $this->tap_charge_id,
+                'paid_at' => $this->paid_at?->toIso8601String(),
+            ]);
+
+            $signature = hash_hmac('sha256', $body, config('services.hub.key'));
+
             Http::withHeaders(['X-Hub-Signature' => $signature])
                 ->withBody($body, 'application/json')
                 ->post(config('services.hub.target_url'))
