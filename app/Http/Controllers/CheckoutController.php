@@ -78,13 +78,12 @@ class CheckoutController extends Controller
         $charge = $tap->retrieveCharge($tapId);
         $paid = $charge['status'] === 'CAPTURED';
 
-        $order->update([
-            'status' => $paid ? 'paid' : 'failed',
-            'paid_at' => $paid ? now() : null,
-        ]);
+        $order->applyTapStatus($charge['status']);
 
         if ($order->return_url) {
-            return redirect()-> away($order->return_url . '?order_ref=' . $order->external_ref . '&status=' . ($paid ? 'paid' : 'failed'));
+            $separator = str_contains($order->return_url, '?') ? '&' : '?';
+
+            return redirect()->away($order->return_url . $separator . 'order_ref=' . $order->external_ref . '&status=' . ($paid ? 'paid' : 'failed'));
         }
         return redirect($paid ? '/checkout/success' : '/checkout/failed');
     }

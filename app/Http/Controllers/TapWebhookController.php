@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class TapWebhookController extends Controller
 {
@@ -33,41 +32,8 @@ class TapWebhookController extends Controller
 
         $order = Order::where('tap_charge_id', $payload['id'])->first();
 
-        if ($order && $order->status !== 'paid'){
-            $order->update([
-                'status' => $payload['status'] === 'CAPTURED' ? 'paid' : 'failed',
-                'paid_at' => $payload['status'] === 'CAPTURED' ? now() : null,
-            ]);
-
-            if ($order->source === 'career_platform' && $order->status === 'paid') {
-                $this->notifyCareerPlatform($order);
-            }
-        }
+        $order?->applyTapStatus($payload['status'] ?? '');
 
         return response()->json(['recieved' => true]);
-    }
-
-    private function notifyCareerPlatform(Order $order): void
-    {
-        $body = json_encode([
-            'external_user_id' => $order->external_user_id,
-            'order_ref' => $order->external_ref,
-            'plan_code' => $order->product_key,
-            'amount' => (float) $order->amount,
-            'currency' => $order->currency,
-            'status' => 'paid',
-            'tap_charge_id' => $order->tap_charge_id,
-            'paid_at' => $order->paid_at?->toIso8601String(),
-        ]);
-
-        $signature = hash_hmac('sha256', $body, config('services.hub.key'));
-
-        try {
-            Http::withHeaders(['X-Hub-Signature' => $signature])
-                ->withBody($body, 'application/json')
-                ->post(config('services.hub.target_url'));
-        } catch (\Throwable $e) {
-            report($e);
-        }
     }
 }
