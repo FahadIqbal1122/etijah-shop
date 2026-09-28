@@ -52,6 +52,7 @@
                     <td class="px-5 py-3.5 text-slate-500 text-xs">{{ $order->source ?? 'shop' }}</td>
                     <td class="px-5 py-3.5 text-slate-500">{{ $order->created_at->format('M j, Y g:ia') }}</td>
                     <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                        <a href="{{ route('admin.orders.show', $order) }}" class="text-brand-700 hover:text-brand-800 text-sm font-medium mr-4">Details</a>
                         <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="text-brand-700 hover:text-brand-800 text-sm font-medium mr-4">Invoice</a>
                         <form method="POST" action="{{ route('admin.orders.destroy', $order) }}" class="inline">
                             @csrf

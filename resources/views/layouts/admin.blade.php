@@ -20,7 +20,7 @@
                 <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-brand-700 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
                     Dashboard
                 </a>
-                <a href="{{ route('admin.orders') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.orders') ? 'bg-brand-700 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
+                <a href="{{ route('admin.orders') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.orders*') ? 'bg-brand-700 text-white' : 'hover:bg-slate-800 hover:text-white' }}">
                     Orders
                 </a>
                 <a href="{{ route('admin.products') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('admin.products') ? 'bg-brand-700 text-white' : 'hover:bg-slate-800 hover:text-white' }}">

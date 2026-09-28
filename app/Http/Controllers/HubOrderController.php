@@ -34,6 +34,7 @@ class HubOrderController extends Controller
             'product_name' => $request->plan_name,
             'amount' => $request->amount,
             'currency' => $request->currency,
+            'payment_method' => 'tap',
             'status' => 'pending',
             'source' => 'career_platform',
             'external_user_id' => $request->external_user_id,
@@ -55,7 +56,7 @@ class HubOrderController extends Controller
                 'order_ref' => $order->external_ref,
             ]);
         } catch (\Throwable $e) {
-            $order->update(['status' => 'failed']);
+            $order->update(['status' => 'failed', 'failure_reason' => 'Charge creation failed: ' . Str::limit($e->getMessage(), 1500)]);
             report($e);
 
             return response()->json(['error' => 'Could not create charge'], 502);

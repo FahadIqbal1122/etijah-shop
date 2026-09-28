@@ -25,6 +25,7 @@ class Order extends Model
         'return_url',
         'tap_charge_id',
         'paid_at',
+        'failure_reason',
     ];
 
     protected $casts = [

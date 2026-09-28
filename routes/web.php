@@ -43,6 +43,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
         Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
         Route::get('/orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('admin.orders.invoice');
         Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('admin.orders.destroy');
         Route::get('/products', [AdminProductController::class, 'index'])->name('admin.products');

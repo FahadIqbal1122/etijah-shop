@@ -59,7 +59,7 @@ class CheckoutController extends Controller
 
                 return redirect()->away($charge['transaction']['url']);
             } catch (\Throwable $e) {
-                $order->update(['status' => 'failed']);
+                $order->update(['status' => 'failed', 'failure_reason' => 'Charge creation failed: ' . \Illuminate\Support\Str::limit($e->getMessage(), 1500)]);
                 report($e);
 
                 return redirect('/checkout/failed');
