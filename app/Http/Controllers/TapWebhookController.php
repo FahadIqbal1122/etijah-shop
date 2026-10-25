@@ -12,9 +12,12 @@ class TapWebhookController extends Controller
         $payload = $request->json()->all();
         $secretKey = config('services.tap.secret_key');
 
-        // Tap signs the exact decimal-formatted amount (e.g. "49.000" for BHD),
-        // not PHP's default float-to-string cast (which drops trailing zeros to "49").
-        $amount = number_format((float) ($payload['amount'] ?? 0), 3, '.', '');
+        // Tap signs the amount rounded to the currency's own decimals: 3 for BHD/KWD/OMR/JOD, 2 for everything else
+        // (e.g. "59.00" for SAR, "49.000" for BHD), not PHP's default float-to-string cast (which drops trailing zeros).
+        // https://developers.tap.company/docs/webhook
+        // previous: $amount = number_format((float) ($payload['amount'] ?? 0), 3, '.', '');   // wrong for SAR/AED/QAR/USD
+        $decimals = in_array($payload['currency'] ?? '', ['BHD', 'KWD', 'OMR', 'JOD'], true) ? 3 : 2;
+        $amount = number_format((float) ($payload['amount'] ?? 0), $decimals, '.', '');
 
         $toBeHashed = 'x_id' . ($payload['id'] ?? '')
             . 'x_amount' . $amount
